@@ -1,8 +1,9 @@
-name: Generate ASCII Artwork
+name: MultiJob
 
 on: push
 jobs:
     Build_job:
+        
         runs-on: ubuntu-latest
         steps:
             # - name: Checkout Repo
@@ -14,9 +15,10 @@ jobs:
             - name: Execute Cowsay Command
               run: cowsay -f dragon "Run for cover, I am a DRAGON...RAWR" >> dragon.txt 
 
-            - name: Sleep for 30 Sec
-              run: sleep 30
+            - name: Sleep for 10 Sec
+              run: sleep 10
     Test_job:
+        needs: Build_job
         runs-on: ubuntu-latest
         steps:
             - name: Sleep for 10 Sec
@@ -26,6 +28,7 @@ jobs:
               run: grep -i "dragon" dragon.txt
 
     Deploy_job:
+        needs: [Test_job]
         runs-on: ubuntu-latest
         steps:
             - name: Read File
