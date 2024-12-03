@@ -2,7 +2,7 @@ name: CronJob
 
 #on: push
 on: 
-    push
+    workflow_dispatch: 
 #   schedule:
 #     - cron: "*/1 * * * *"
 env:
