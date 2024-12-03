@@ -37,7 +37,7 @@ jobs:
         runs-on: ubuntu-latest
         concurrency: 
           group: production-deployment
-          cancel-in-progress: yes
+          cancel-in-progress: true
         steps:
                       
             - name:  Docker Run
