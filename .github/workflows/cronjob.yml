@@ -1,8 +1,8 @@
-name: Concurrency
+name: TimeoutMinute
 
 #on: push
 on: 
-    workflow_dispatch: 
+    push
 #   schedule:
 #     - cron: "*/1 * * * *"
 env:
@@ -41,8 +41,10 @@ jobs:
         steps:
                       
             - name:  Docker Run
-              
-              run: docker run --name sumesh -d -p 80:80 ${{ vars.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+              timeout-minutes: 1
+              run: |
+                docker run --name sumesh -d -p 80:80 ${{ vars.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+                sleep 300s
 
             - name: Check Localhost
               run: curl http://localhost
