@@ -1,5 +1,5 @@
 
-name: Exploring Variables and Secrets
+name: Docker Build and Deployment
 
 on: push
 env:
