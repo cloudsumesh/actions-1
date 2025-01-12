@@ -1,0 +1,54 @@
+
+name: Expression Docker Build and Deployment
+
+on: push
+env:
+    CONTAINER_REGISTRY: hub.docker.com              
+    IMAGE_NAME: nginx
+    IMAGE_VERSION: latest  
+    LOCAL_IMAGE_NAME: nginx_local
+jobs:
+    docker:                 
+            
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repo
+              uses: actions/checkout@v4
+              
+            - name: Docker Build              
+              run: docker build -t ${{ env.LOCAL_IMAGE_NAME }} .
+
+            - name: Tag Image
+              run: docker tag ${{ env.LOCAL_IMAGE_NAME }} ${{ vars.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+
+            - name: Docker Login
+              run: docker login --username=${{ vars.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
+
+            - name:  Docker Publish                         
+              run: docker push ${{ vars.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }} 
+
+    deploy:
+        if: github.ref == 'refs/heads/main'
+
+        needs: docker
+        runs-on: ubuntu-latest
+        steps:
+                      
+            - name:  Docker Run
+              
+              run: docker run --name sumesh -d -p 80:80 ${{ vars.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_VERSION }}
+
+            - name: Check Localhost
+              run: curl http://localhost
+
+            - name: Show custom message
+              run: curl http://localhost/index.html
+
+            - name: Show content of Index file
+              run: docker exec sumesh cat /usr/share/nginx/html/index.html
+
+            - name: List Running Dockers
+              run: docker ps
+
+
+
